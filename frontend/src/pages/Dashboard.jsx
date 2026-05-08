@@ -5,11 +5,24 @@ import clienteAxios from '../api/axios';
 const Dashboard = () => {
     const [clientes, setClientes] = useState([]);
     const [mostrarForm, setMostrarForm] = useState(false);
-    const [nuevoCliente, setNuevoCliente] = useState({ nombre_entidad: '', nit: '' });
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
-    // 1. Cargar clientes al iniciar
+    // Estado inicial con los 11 campos de la nueva DB
+    const [nuevoCliente, setNuevoCliente] = useState({
+        nombre: '',
+        sigla: '',
+        nit: '',
+        direccion: '',
+        representante_nombre: '',
+        representante_correo: '',
+        representante_telefono: '',
+        contacto_nombre: '',
+        contacto_cargo: '',
+        contacto_correo: '',
+        contacto_telefono: ''
+    });
+
     const obtenerClientes = async () => {
         try {
             const res = await clienteAxios.get('/clientes');
@@ -23,121 +36,111 @@ const Dashboard = () => {
         obtenerClientes();
     }, []);
 
-    // 2. Función para cerrar sesión
     const handleLogout = () => {
-        localStorage.removeItem('token'); // Borramos el pase de entrada
+        localStorage.removeItem('token');
         navigate('/login');
     };
 
-    // 3. Manejar el envío del formulario
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
         try {
             await clienteAxios.post('/clientes', nuevoCliente);
-            setNuevoCliente({ nombre_entidad: '', nit: '' }); // Limpiar campos
-            setMostrarForm(false); // Ocultar formulario
-            obtenerClientes(); // Recargar la lista automáticamente
+            // Limpiar formulario
+            setNuevoCliente({
+                nombre: '', sigla: '', nit: '', direccion: '',
+                representante_nombre: '', representante_correo: '', representante_telefono: '',
+                contacto_nombre: '', contacto_cargo: '', contacto_correo: '', contacto_telefono: ''
+            });
+            setMostrarForm(false);
+            obtenerClientes();
         } catch (err) {
             setError(err.response?.data?.mensaje || 'Error al guardar el cliente');
         }
     };
-    // 4. Función para eliminación lógica
-    const handleEliminar = async (id) => {
-        // Preguntamos por seguridad (Punto 2 - Facilidad de uso)
+
+    const handleEliminar = async (id_cliente) => {
         if (!window.confirm('¿Estás seguro de desactivar este cliente?')) return;
-
         try {
-            await clienteAxios.put(`/clientes/eliminar/${id}`);
-
-            // Actualizamos el estado local para quitarlo de la lista sin llamar a la DB
-            setClientes(clientes.filter(cliente => cliente.id !== id));
-
-            alert('Cliente desactivado correctamente');
+            await clienteAxios.put(`/clientes/eliminar/${id_cliente}`);
+            setClientes(clientes.filter(c => c.id_cliente !== id_cliente));
         } catch (err) {
-            console.error("Error al eliminar:", err);
             alert('No se pudo eliminar el cliente');
         }
     };
 
     return (
-        <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h1>Panel de Control - Seguros</h1>
-                <button
-                    onClick={handleLogout}
-                    style={{ padding: '10px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
-                >
+        <div style={{ padding: '20px', fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#f8f9fa', padding: '10px 20px', borderRadius: '8px' }}>
+                <h2>Panel de Gestión de Clientes</h2>
+                <button onClick={handleLogout} style={{ padding: '8px 15px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
                     Cerrar Sesión
                 </button>
             </div>
-            <hr />
 
-            <div style={{ marginBottom: '20px' }}>
-                <button
+            <div style={{ marginTop: '20px' }}>
+                <button 
                     onClick={() => setMostrarForm(!mostrarForm)}
                     style={{ padding: '10px 20px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
                 >
-                    {mostrarForm ? 'Cancelar' : '+ Agregar Nuevo Cliente'}
+                    {mostrarForm ? 'Cerrar Formulario' : '+ Registrar Nueva Entidad'}
                 </button>
             </div>
 
-            {/* Formulario Desplegable */}
             {mostrarForm && (
-                <div style={{ backgroundColor: '#f9f9f9', padding: '20px', borderRadius: '8px', marginBottom: '20px', border: '1px solid #ddd' }}>
-                    <h3>Registrar Nueva Entidad</h3>
+                <div style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '8px', marginTop: '20px', border: '1px solid #ddd', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                    <h3>Formulario de Registro</h3>
                     {error && <p style={{ color: 'red' }}>{error}</p>}
-                    <form onSubmit={handleSubmit}>
-                        <input
-                            type="text"
-                            placeholder="Nombre de la Institución (Ej: ABC)"
-                            value={nuevoCliente.nombre_entidad}
-                            onChange={(e) => setNuevoCliente({ ...nuevoCliente, nombre_entidad: e.target.value })}
-                            style={{ padding: '8px', marginRight: '10px', width: '250px' }}
-                            required
-                        />
-                        <input
-                            type="text"
-                            placeholder="NIT"
-                            value={nuevoCliente.nit}
-                            onChange={(e) => setNuevoCliente({ ...nuevoCliente, nit: e.target.value })}
-                            style={{ padding: '8px', marginRight: '10px', width: '150px' }}
-                            required
-                        />
-                        <button type="submit" style={{ padding: '8px 15px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px' }}>
-                            Guardar Cliente
+                    <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                        {/* Datos de la Entidad */}
+                        <div style={{ gridColumn: 'span 2' }}><h4>Datos de la Institución</h4></div>
+                        <input type="text" placeholder="Nombre de la Entidad" value={nuevoCliente.nombre} onChange={(e) => setNuevoCliente({...nuevoCliente, nombre: e.target.value})} required style={{ padding: '8px' }} />
+                        <input type="text" placeholder="Sigla (Ej: ABC)" value={nuevoCliente.sigla} onChange={(e) => setNuevoCliente({...nuevoCliente, sigla: e.target.value})} style={{ padding: '8px' }} />
+                        <input type="text" placeholder="NIT" value={nuevoCliente.nit} onChange={(e) => setNuevoCliente({...nuevoCliente, nit: e.target.value})} style={{ padding: '8px' }} />
+                        <input type="text" placeholder="Dirección" value={nuevoCliente.direccion} onChange={(e) => setNuevoCliente({...nuevoCliente, direccion: e.target.value})} style={{ padding: '8px' }} />
+
+                        {/* Representante Legal */}
+                        <div style={{ gridColumn: 'span 2' }}><h4>Representante Legal</h4></div>
+                        <input type="text" placeholder="Nombre Representante" value={nuevoCliente.representante_nombre} onChange={(e) => setNuevoCliente({...nuevoCliente, representante_nombre: e.target.value})} style={{ padding: '8px' }} />
+                        <input type="email" placeholder="Email Representante" value={nuevoCliente.representante_correo} onChange={(e) => setNuevoCliente({...nuevoCliente, representante_correo: e.target.value})} style={{ padding: '8px' }} />
+                        <input type="text" placeholder="Teléfono Representante" value={nuevoCliente.representante_telefono} onChange={(e) => setNuevoCliente({...nuevoCliente, representante_telefono: e.target.value})} style={{ padding: '8px' }} />
+
+                        {/* Persona de Contacto */}
+                        <div style={{ gridColumn: 'span 2' }}><h4>Persona de Contacto (Operativo)</h4></div>
+                        <input type="text" placeholder="Nombre de Contacto" value={nuevoCliente.contacto_nombre} onChange={(e) => setNuevoCliente({...nuevoCliente, contacto_nombre: e.target.value})} style={{ padding: '8px' }} />
+                        <input type="text" placeholder="Cargo" value={nuevoCliente.contacto_cargo} onChange={(e) => setNuevoCliente({...nuevoCliente, contacto_cargo: e.target.value})} style={{ padding: '8px' }} />
+                        <input type="email" placeholder="Email Contacto" value={nuevoCliente.contacto_correo} onChange={(e) => setNuevoCliente({...nuevoCliente, contacto_correo: e.target.value})} style={{ padding: '8px' }} />
+                        <input type="text" placeholder="Teléfono Contacto" value={nuevoCliente.contacto_telefono} onChange={(e) => setNuevoCliente({...nuevoCliente, contacto_telefono: e.target.value})} style={{ padding: '8px' }} />
+
+                        <button type="submit" style={{ gridColumn: 'span 2', padding: '12px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                            Guardar Cliente en Base de Datos
                         </button>
                     </form>
                 </div>
             )}
 
-            <h3>Lista de Clientes (Empresas Asesoradas)</h3>
-            <table border="1" style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse', marginTop: '20px' }}>
+            <h3 style={{ marginTop: '30px' }}>Listado de Clientes Activos</h3>
+            <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse', marginTop: '10px' }}>
                 <thead>
-                    <tr style={{ backgroundColor: '#f2f2f2' }}>
-                        <th style={{ padding: '10px' }}>ID</th>
-                        <th style={{ padding: '10px' }}>Nombre de la Entidad</th>
-                        <th style={{ padding: '10px' }}>NIT</th>
-                        <th style={{ padding: '10px' }}>Acciones</th> {/* Nueva Columna */}
+                    <tr style={{ backgroundColor: '#343a40', color: 'white' }}>
+                        <th style={{ padding: '12px' }}>ID</th>
+                        <th style={{ padding: '12px' }}>Entidad</th>
+                        <th style={{ padding: '12px' }}>NIT</th>
+                        <th style={{ padding: '12px' }}>Representante</th>
+                        <th style={{ padding: '12px' }}>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     {clientes.map((c) => (
-                        <tr key={c.id}>
-                            <td style={{ padding: '10px' }}>{c.id}</td>
-                            <td style={{ padding: '10px' }}>{c.nombre_entidad}</td>
-                            <td style={{ padding: '10px' }}>{c.nit}</td>
-                            <td style={{ padding: '10px' }}>
-                                <button
-                                    onClick={() => handleEliminar(c.id)}
-                                    style={{
-                                        padding: '5px 10px',
-                                        backgroundColor: '#ff4d4d',
-                                        color: 'white',
-                                        border: 'none',
-                                        borderRadius: '3px',
-                                        cursor: 'pointer'
-                                    }}
+                        <tr key={c.id_cliente} style={{ borderBottom: '1px solid #ddd' }}>
+                            <td style={{ padding: '12px' }}>{c.id_cliente}</td>
+                            <td style={{ padding: '12px' }}><strong>{c.nombre}</strong> ({c.sigla})</td>
+                            <td style={{ padding: '12px' }}>{c.nit}</td>
+                            <td style={{ padding: '12px' }}>{c.representante_nombre}</td>
+                            <td style={{ padding: '12px' }}>
+                                <button 
+                                    onClick={() => handleEliminar(c.id_cliente)}
+                                    style={{ padding: '5px 10px', backgroundColor: '#ff4d4d', color: 'white', border: 'none', borderRadius: '3px', cursor: 'pointer' }}
                                 >
                                     Eliminar
                                 </button>
