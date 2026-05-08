@@ -97,5 +97,13 @@ const loginUsuario = async (req, res) => {
         res.status(500).json({ mensaje: 'Error en el servidor' });
     }
 };
+const getAsesores = async (req, res) => {
+    try {
+        const result = await pool.query('SELECT id_usuario, nombre, email, rol FROM usuario WHERE is_active = true');
+        res.json(result.rows);
+    } catch (error) {
+        res.status(500).json({ mensaje: 'Error al obtener asesores' });
+    }
+};
 
-module.exports = { registrarUsuario, loginUsuario };
+module.exports = { registrarUsuario, loginUsuario, getAsesores };

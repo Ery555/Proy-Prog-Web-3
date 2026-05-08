@@ -5,6 +5,7 @@ require('dotenv').config();
 const authRoutes = require('./routes/authRoutes');
 const { verificarToken } = require('./middleware/authMiddleware');
 const clienteRoutes = require('./routes/clienteRoutes');
+const contratoRoutes = require('./routes/contratoRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -30,6 +31,7 @@ app.get('/api/perfil', verificarToken, (req, res) => {
     res.json({ mensaje: 'Bienvenido al área protegida', usuario: req.usuario });
 });
 app.use('/api/clientes', clienteRoutes);
+app.use('/api/contratos', contratoRoutes);
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
