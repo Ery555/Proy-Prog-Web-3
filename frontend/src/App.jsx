@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
+import ContratosPage from './pages/ContratosPage'; // 1. Importamos la nueva página
 
 // Componente para proteger rutas
 const RutaPrivada = ({ children }) => {
@@ -14,13 +15,17 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         
-        {/* Solo entras aquí si hay token */}
+        {/* Rutas Privadas */}
         <Route path="/dashboard" element={
-            <RutaPrivada>
-                <Dashboard />
-            </RutaPrivada>
+            <RutaPrivada><Dashboard /></RutaPrivada>
+        } />
+        
+        {/* 2. Añadimos la ruta de contratos */}
+        <Route path="/contratos" element={
+            <RutaPrivada><ContratosPage /></RutaPrivada>
         } />
 
+        {/* Redirección por defecto */}
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </Router>

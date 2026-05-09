@@ -53,7 +53,7 @@ const Dashboard = () => {
                 contacto_nombre: '', contacto_cargo: '', contacto_correo: '', contacto_telefono: ''
             });
             setMostrarForm(false);
-            obtenerClientes();
+            obtenerClientes(); // Recargar la tabla
         } catch (err) {
             setError(err.response?.data?.mensaje || 'Error al guardar el cliente');
         }
@@ -71,11 +71,22 @@ const Dashboard = () => {
 
     return (
         <div style={{ padding: '20px', fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif' }}>
+            
+            {/* BARRA DE NAVEGACIÓN SUPERIOR */}
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', padding: '10px', backgroundColor: '#e9ecef', borderRadius: '8px' }}>
+                <button onClick={() => navigate('/dashboard')} style={{ padding: '10px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>
+                    🏢 Clientes
+                </button>
+                <button onClick={() => navigate('/contratos')} style={{ padding: '10px', backgroundColor: '#6c757d', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+                    📄 Contratos
+                </button>
+                <button onClick={handleLogout} style={{ padding: '10px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: 'auto' }}>
+                    Salir
+                </button>
+            </div>
+
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#f8f9fa', padding: '10px 20px', borderRadius: '8px' }}>
                 <h2>Panel de Gestión de Clientes</h2>
-                <button onClick={handleLogout} style={{ padding: '8px 15px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-                    Cerrar Sesión
-                </button>
             </div>
 
             <div style={{ marginTop: '20px' }}>
@@ -87,11 +98,13 @@ const Dashboard = () => {
                 </button>
             </div>
 
+            {/* FORMULARIO DESPLEGABLE */}
             {mostrarForm && (
                 <div style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '8px', marginTop: '20px', border: '1px solid #ddd', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
                     <h3>Formulario de Registro</h3>
                     {error && <p style={{ color: 'red' }}>{error}</p>}
                     <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                        
                         {/* Datos de la Entidad */}
                         <div style={{ gridColumn: 'span 2' }}><h4>Datos de la Institución</h4></div>
                         <input type="text" placeholder="Nombre de la Entidad" value={nuevoCliente.nombre} onChange={(e) => setNuevoCliente({...nuevoCliente, nombre: e.target.value})} required style={{ padding: '8px' }} />
@@ -119,6 +132,7 @@ const Dashboard = () => {
                 </div>
             )}
 
+            {/* TABLA DE CLIENTES */}
             <h3 style={{ marginTop: '30px' }}>Listado de Clientes Activos</h3>
             <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse', marginTop: '10px' }}>
                 <thead>

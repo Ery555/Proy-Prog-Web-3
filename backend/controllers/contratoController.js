@@ -20,17 +20,18 @@ const getContratos = async (req, res) => {
 
 // 2. Crear un nuevo contrato
 const crearContrato = async (req, res) => {
-    const { id_cliente, codigo, fecha_inicio, fecha_fin, importe } = req.body;
+    // 1. Extraemos 'objeto' del cuerpo de la petición
+    const { id_cliente, codigo, objeto, fecha_inicio, fecha_fin, importe } = req.body;
     try {
         const nuevoContrato = await pool.query(
-            `INSERT INTO contrato_servicios (id_cliente, codigo, fecha_inicio, fecha_fin, importe) 
-             VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-            [id_cliente, codigo, fecha_inicio, fecha_fin, importe]
+            `INSERT INTO contrato_servicios (id_cliente, codigo, objeto, fecha_inicio, fecha_fin, importe) 
+             VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+            [id_cliente, codigo, objeto, fecha_inicio, fecha_fin, importe]
         );
         res.status(201).json(nuevoContrato.rows[0]);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ mensaje: 'Error al crear contrato (el código podría estar duplicado)' });
+        res.status(500).json({ mensaje: 'Error al crear contrato' });
     }
 };
 
