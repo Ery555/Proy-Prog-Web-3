@@ -80,6 +80,9 @@ const Dashboard = () => {
                 <button onClick={() => navigate('/contratos')} style={{ padding: '10px', backgroundColor: '#6c757d', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
                     📄 Contratos
                 </button>
+                <button onClick={() => navigate('/aseguradoras')} style={{ padding: '10px', backgroundColor: '#17a2b8', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>
+                    🛡️ Aseguradoras
+                </button>
                 <button onClick={handleLogout} style={{ padding: '10px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: 'auto' }}>
                     Salir
                 </button>
