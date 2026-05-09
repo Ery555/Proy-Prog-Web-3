@@ -6,6 +6,7 @@ const authRoutes = require('./routes/authRoutes');
 const { verificarToken } = require('./middleware/authMiddleware');
 const clienteRoutes = require('./routes/clienteRoutes');
 const contratoRoutes = require('./routes/contratoRoutes');
+const aseguradoraRoutes = require('./routes/aseguradoraRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -32,6 +33,8 @@ app.get('/api/perfil', verificarToken, (req, res) => {
 });
 app.use('/api/clientes', clienteRoutes);
 app.use('/api/contratos', contratoRoutes);
+app.use('/api/aseguradoras', aseguradoraRoutes);
+
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
