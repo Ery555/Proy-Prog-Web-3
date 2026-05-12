@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import clienteAxios from '../api/axios';
+import Navbar from '../components/Navbar';
 
 const AseguradorasPage = () => {
     const [aseguradoras, setAseguradoras] = useState([]);
@@ -59,21 +60,7 @@ const AseguradorasPage = () => {
     return (
         <div style={{ padding: '20px', fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif' }}>
             
-            {/* NUEVA BARRA DE NAVEGACIÓN ACTUALIZADA */}
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', padding: '10px', backgroundColor: '#e9ecef', borderRadius: '8px' }}>
-                <button onClick={() => navigate('/dashboard')} style={{ padding: '10px', backgroundColor: '#6c757d', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-                    🏢 Clientes
-                </button>
-                <button onClick={() => navigate('/contratos')} style={{ padding: '10px', backgroundColor: '#6c757d', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-                    📄 Contratos
-                </button>
-                <button onClick={() => navigate('/aseguradoras')} style={{ padding: '10px', backgroundColor: '#17a2b8', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>
-                    🛡️ Aseguradoras
-                </button>
-                <button onClick={handleLogout} style={{ padding: '10px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: 'auto' }}>
-                    Salir
-                </button>
-            </div>
+            <Navbar/>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#f8f9fa', padding: '10px 20px', borderRadius: '8px' }}>
                 <h2>Gestión de Compañías Aseguradoras</h2>

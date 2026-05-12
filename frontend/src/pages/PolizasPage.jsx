@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import clienteAxios from '../api/axios';
+import Navbar from '../components/Navbar';
 
 const PolizasPage = () => {
     const [polizas, setPolizas] = useState([]);
@@ -67,14 +68,7 @@ const PolizasPage = () => {
 
     return (
         <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-            {/* Barra de Navegación Unificada */}
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', padding: '10px', backgroundColor: '#e9ecef', borderRadius: '8px' }}>
-                <button onClick={() => navigate('/dashboard')} style={{ padding: '10px', cursor: 'pointer' }}>🏢 Clientes</button>
-                <button onClick={() => navigate('/contratos')} style={{ padding: '10px', cursor: 'pointer' }}>📄 Contratos</button>
-                <button onClick={() => navigate('/aseguradoras')} style={{ padding: '10px', cursor: 'pointer' }}>🛡️ Aseguradoras</button>
-                <button onClick={() => navigate('/polizas')} style={{ padding: '10px', backgroundColor: '#007bff', color: 'white', fontWeight: 'bold' }}>📋 Pólizas</button>
-                <button onClick={() => { localStorage.removeItem('token'); navigate('/login'); }} style={{ marginLeft: 'auto', backgroundColor: '#dc3545', color: 'white' }}>Salir</button>
-            </div>
+            <Navbar/>
 
             <h2>Gestión de Pólizas de Seguro</h2>
             <button onClick={() => setMostrarForm(!mostrarForm)} style={{ marginBottom: '20px', padding: '10px', backgroundColor: '#28a745', color: 'white' }}>
